@@ -1,13 +1,12 @@
 import express from "express";
 import cors from "cors";
+import healthRoutes from "./routes/health.routes.js";
 
 const app = express();
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
-app.get("/health", (req, res) => {
-  res.json({ ok: true, service: "feedbackloop-api" });
-});
+app.use("/", healthRoutes);
 
 export default app;
