@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum RequestStatus {
+  PENDING
+  UNDER_REVIEW
+  PLANNED
+  IN_PROGRESS
+  DONE
+  REJECTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+
+  requestsCreated   FeatureRequest[] @relation("CreatedBy")
+  requestsPublished FeatureRequest[] @relation("PublishedBy")
+  votes             Vote[]
+  updates           StatusUpdate[]
+}
+
+model FeatureRequest {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  category    String
+  status      RequestStatus @default(PENDING)
+  isPublished Boolean       @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdById   String?
+  createdBy     User? @relation("CreatedBy", fields: [createdById], references: [id])
+
+  publishedById String?
+  publishedBy   User? @relation("PublishedBy", fields: [publishedById], references: [id])
+
+  votes       Vote[]
+  updates     StatusUpdate[]
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  requestId String
+  userId    String
+  value     Int      @default(1)
+  createdAt DateTime @default(now())
+
+  request FeatureRequest @relation(fields: [requestId], references: [id])
+  user    User           @relation(fields: [userId], references: [id])
+
+  @@unique([requestId, userId])
+}
+
+model StatusUpdate {
+  id          String   @id @default(cuid())
+  requestId   String
+  message     String
+  createdById String
+  createdAt   DateTime @default(now())
+
+  request   FeatureRequest @relation(fields: [requestId], references: [id])
+  createdBy User           @relation(fields: [createdById], references: [id])
+}
