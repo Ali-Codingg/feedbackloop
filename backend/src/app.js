@@ -3,6 +3,7 @@ import cors from "cors";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import protectedRoutes from "./routes/protected.routes.js";
+import requestRoutes from "./routes/requests.routes.js";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.use(express.json());
 app.use("/", healthRoutes);
 app.use("/", authRoutes);
 app.use("/", protectedRoutes);
+app.use("/", requestRoutes);
 
 export default app;
