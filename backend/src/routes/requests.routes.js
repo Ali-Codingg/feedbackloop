@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 import { requireRole } from "../middleware/requireRole.js";
 import * as votesController from "../controllers/votes.controller.js";
+import * as statusUpdatesController from "../controllers/statusUpdates.controller.js";
 
 import * as requestsController from "../controllers/requests.controller.js";
 import * as adminRequestsController from "../controllers/adminRequests.controller.js";
@@ -18,6 +19,16 @@ router.post("/requests", requireAuth, requestsController.create);
 // Voting
 router.post("/requests/:id/vote", requireAuth, votesController.vote);
 router.delete("/requests/:id/vote", requireAuth, votesController.unvote);
+
+// Status updates / changelog
+router.get("/requests/:id/updates", statusUpdatesController.listForPublishedRequest);
+
+router.post(
+  "/admin/requests/:id/updates",
+  requireAuth,
+  requireRole("ADMIN"),
+  statusUpdatesController.create
+);
 
 // Admin moderation
 router.get("/admin/requests", requireAuth, requireRole("ADMIN"), adminRequestsController.listAll);
