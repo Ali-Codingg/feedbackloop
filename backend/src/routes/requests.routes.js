@@ -19,6 +19,7 @@ router.post("/requests", requireAuth, requestsController.create);
 // Voting
 router.post("/requests/:id/vote", requireAuth, votesController.vote);
 router.delete("/requests/:id/vote", requireAuth, votesController.unvote);
+router.get("/requests/:id/vote-summary", requireAuth, votesController.summary);
 
 // Status updates / changelog
 router.get("/requests/:id/updates", statusUpdatesController.listForPublishedRequest);
