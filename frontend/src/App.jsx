@@ -1,35 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import { AuthProvider } from "./context/AuthContext";
+import { useAuth } from "./context/useAuth";
 
-function App() {
-  const [count, setCount] = useState(0)
+import BoardPage from "./pages/BoardPage";
+import RequestDetailsPage from "./pages/RequestDetailsPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import SubmitRequestPage from "./pages/SubmitRequestPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loadingUser } = useAuth();
+
+  if (loadingUser) return <main className="page">Loading...</main>;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+  return children;
 }
 
-export default App
+function AdminRoute({ children }) {
+  const { isAdmin, loadingUser } = useAuth();
+
+  if (loadingUser) return <main className="page">Loading...</main>;
+  if (!isAdmin) return <Navigate to="/" replace />;
+
+  return children;
+}
+
+function AppRoutes() {
+  return (
+    <>
+      <Navbar />
+
+      <Routes>
+        <Route path="/" element={<BoardPage />} />
+        <Route path="/requests/:id" element={<RequestDetailsPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        <Route
+          path="/submit"
+          element={
+            <ProtectedRoute>
+              <SubmitRequestPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboardPage />
+            </AdminRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
