@@ -334,3 +334,28 @@ a {
     max-width: 260px;
   }
 }
+
+.success-box {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  padding: 18px;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.success-box p {
+  margin-bottom: 0;
+}
+
+.success-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.form textarea {
+  resize: vertical;
+  min-height: 140px;
+}
