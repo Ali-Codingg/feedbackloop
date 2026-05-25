@@ -488,3 +488,33 @@ a {
     padding-top: 20px;
   }
 }
+
+.filters-bar {
+  display: grid;
+  grid-template-columns: 1fr 180px 180px auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.filters-bar input,
+.filters-bar select {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font: inherit;
+  background: white;
+}
+
+.filters-bar input:focus,
+.filters-bar select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+@media (max-width: 800px) {
+  .filters-bar {
+    grid-template-columns: 1fr;
+  }
+}
