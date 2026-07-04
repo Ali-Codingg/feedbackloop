@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import SubmitRequestPage from "./pages/SubmitRequestPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loadingUser } = useAuth();
@@ -47,6 +48,15 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+            <Route
+      path="/profile"
+      element={
+        <ProtectedRoute>
+          <ProfilePage />
+        </ProtectedRoute>
+      }
+    />
 
         <Route
           path="/admin"

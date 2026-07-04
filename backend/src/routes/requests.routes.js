@@ -3,7 +3,7 @@ import { requireAuth } from "../middleware/requireAuth.js";
 import { requireRole } from "../middleware/requireRole.js";
 import * as votesController from "../controllers/votes.controller.js";
 import * as statusUpdatesController from "../controllers/statusUpdates.controller.js";
-
+import * as analyticsController from "../controllers/analytics.controller.js";
 import * as requestsController from "../controllers/requests.controller.js";
 import * as adminRequestsController from "../controllers/adminRequests.controller.js";
 
@@ -35,5 +35,10 @@ router.post(
 router.get("/admin/requests", requireAuth, requireRole("ADMIN"), adminRequestsController.listAll);
 router.patch("/admin/requests/:id/status", requireAuth, requireRole("ADMIN"), adminRequestsController.updateStatus);
 router.delete("/admin/requests/:id", requireAuth, requireRole("ADMIN"), adminRequestsController.remove);
-
+router.get(
+  "/admin/analytics",
+  requireAuth,
+  requireRole("ADMIN"),
+  analyticsController.adminAnalytics
+);
 export default router;

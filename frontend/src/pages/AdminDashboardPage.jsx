@@ -16,6 +16,7 @@ export default function AdminDashboardPage() {
   const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [analytics, setAnalytics] = useState(null);
 
   async function loadRequests() {
     try {
@@ -31,8 +32,21 @@ export default function AdminDashboardPage() {
     }
   }
 
+  async function loadAnalytics() {
+    try {
+      const data = await apiRequest("/admin/analytics");
+      setAnalytics(data);
+    } catch (err) {
+      console.error("Failed to load analytics", err);
+    }
+  }
+
+  async function refreshDashboard() {
+    await Promise.all([loadRequests(), loadAnalytics()]);
+  }
+
   useEffect(() => {
-    loadRequests();
+    refreshDashboard();
   }, []);
 
   async function updateStatus(requestId, status, isPublished) {
@@ -62,6 +76,8 @@ export default function AdminDashboardPage() {
         )
       );
 
+      await loadAnalytics();
+
       setSuccess("Request updated successfully.");
     } catch (err) {
       setError(err.message || "Failed to update request");
@@ -87,6 +103,9 @@ export default function AdminDashboardPage() {
       });
 
       setRequests((current) => current.filter((item) => item.id !== requestId));
+
+      await loadAnalytics();
+
       setSuccess("Request deleted successfully.");
     } catch (err) {
       setError(err.message || "Failed to delete request");
@@ -132,10 +151,43 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <button className="secondary-button" type="button" onClick={loadRequests}>
+        <button
+          className="secondary-button"
+          type="button"
+          onClick={refreshDashboard}
+        >
           Refresh
         </button>
       </div>
+
+      {analytics && (
+        <section className="stats-grid admin-stats">
+          <div className="stat-card">
+            <strong>{analytics.totals.totalRequests}</strong>
+            <span>Total requests</span>
+          </div>
+
+          <div className="stat-card">
+            <strong>{analytics.totals.publishedRequests}</strong>
+            <span>Published</span>
+          </div>
+
+          <div className="stat-card">
+            <strong>{analytics.totals.pendingRequests}</strong>
+            <span>Pending</span>
+          </div>
+
+          <div className="stat-card">
+            <strong>{analytics.totals.totalVotes}</strong>
+            <span>Total votes</span>
+          </div>
+
+          <div className="stat-card">
+            <strong>{analytics.totals.totalUsers}</strong>
+            <span>Total users</span>
+          </div>
+        </section>
+      )}
 
       {error && <div className="error-box">{error}</div>}
       {success && <div className="success-box">{success}</div>}

@@ -14,6 +14,8 @@ export default function Navbar() {
         <NavLink to="/">Board</NavLink>
 
         {isAuthenticated && <NavLink to="/submit">Submit Request</NavLink>}
+        
+        {isAuthenticated && <NavLink to="/profile">Profile</NavLink>}
 
         {isAdmin && <NavLink to="/admin">Admin</NavLink>}
 
